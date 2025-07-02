@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Restore</title>
+  <link href="logo.png" rel="shortcut icon" type="image/x-icon"/>
+    <style>
+        :root {
+            --primary-purple: #8A81F8;
+            --text-dark: #362C6B;
+            --text-light: #FFFFFF;
+            --background: #F5F3FF;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray-dark: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-dark);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            max-width: 1440px;
+            margin: 0 auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(245, 243, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            height: 32px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.6s ease forwards;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.6s ease forwards;
+        }
+
+        .nav-links a:nth-child(2) { animation-delay: 0.1s; }
+        .nav-links a:nth-child(3) { animation-delay: 0.2s; }
+        .nav-links a:nth-child(4) { animation-delay: 0.3s; }
+
+        .download-btn {
+            background: var(--primary-purple);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInDown 0.6s ease 0.4s forwards;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            background-color: #7A6EE6;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 8rem 1rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 0.6s forwards;
+        }
+
+        .main-title {
+            font-size: 5rem;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 0.8s forwards;
+        }
+
+        .ghost-logo {
+            display: inline-block;
+            height: 80px;
+            vertical-align: middle;
+            margin: 0 0.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .availability {
+            font-size: 0.9rem;
+            color: var(--gray-dark);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 1s forwards;
+        }
+
+        .discover-more {
+            color: var(--primary-purple);
+            text-decoration: none;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .stacked-sections {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .section-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            position: absolute;
+            z-index: 4;
+            text-align: center;
+            color: var(--text-light);
+            max-width: 600px;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .content h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .content p {
+            font-size: 1.25rem;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .phantom-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .features-section {
+            padding: 6rem 2rem;
+            background: var(--white);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--background);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-description {
+            color: var(--gray-dark);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .two-card-section {
+            padding: 6rem 2rem;
+            background: var(--background);
+        }
+
+        .two-card-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .card {
+            flex: 1;
+            background: var(--white);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: var(--gray-dark);
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-button {
+            background: var(--primary-purple);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            background-color: #7A6EE6;
+        }
+
+        .cta-section {
+            background: var(--primary-purple);
+            color: var(--white);
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-section .download-btn {
+            background: var(--white);
+            color: var(--primary-purple);
+            font-size: 1.25rem;
+            padding: 1rem 2rem;
+        }
+
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo img {
+            height: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 4rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social a {
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--background);
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .ghost-logo {
+                height: 40px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .features-section, .two-card-section {
+                padding: 3rem 1rem;
+            }
+
+            .content h2 {
+                font-size: 2rem;
+            }
+
+            .content p {
+                font-size: 1rem;
+            }
+
+            .two-card-container {
+                flex-direction: column;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            margin: 4px 0;
+            transition: 0.3s;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .cards-section {
+            padding: 4rem 2rem;
+            overflow: hidden;
+        }
+
+        .cards-container {
+            height: 100vh;
+            display: flex;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .cards-container .feature-card {
+            flex: 0 0 380px;
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            /* opacity: 0;
+            transform: translateY(100px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); */
+        }
+
+        .cards-container .feature-card.visible {
+            opacity: 0;
+            /* transform: translateY(0) scale(1); */
+        }
+
+        .cards-container .feature-card:nth-child(1) {
+            background: #A78BFA;
+            color: white;
+        }
+
+        .cards-container .feature-card:nth-child(2) {
+            background: #FEE2E2;
+            color: white;
+        }
+
+        .cards-container .feature-card:nth-child(3) {
+            background:  #5652ce;
+            color: #1F2937;
+        }
+
+        .cards-container .card-title {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cards-container .card-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 1200px) {
+            .cards-container {
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                padding: 20px 0;
+            }
+
+            /* .cards-container::-webkit-scrollbar {
+                display: none;
+            } */
+
+            /* .cards-container .feature-card {
+                scroll-snap-align: start;
+                flex: 0 0 85vw;
+            } */
+        }
+
+        .xRoa6_wrapper {
+            min-height: 100vh;
+            background: #F5F3FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .xRoa6_content {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUpIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .xRoa6_heading {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            color: #312E81;
+            line-height: 1.1;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .xRoa6_word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .xRoa6_ghost {
+            width: 80px;
+            height: 80px;
+            margin: 0 10px;
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        @keyframes wordReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes ghostPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeUpIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .xRoa6_word:nth-child(1) { animation: wordReveal 0.6s 0.2s forwards; }
+        .xRoa6_word:nth-child(2) { animation: wordReveal 0.6s 0.3s forwards; }
+        .xRoa6_ghost { animation: ghostPop 0.6s 0.4s forwards; }
+        .xRoa6_word:nth-child(4) { animation: wordReveal 0.6s 0.5s forwards; }
+        .xRoa6_word:nth-child(5) { animation: wordReveal 0.6s 0.6s forwards; }
+
+        @media (max-width: 768px) {
+            .xRoa6_heading {
+                font-size: 2.5rem;
+            }
+
+            .xRoa6_ghost {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <img src="logo.png" alt="Phantom" class="logo">
+            <div class="nav-links">
+                <a href="#security">Security</a>
+                <a href="#learn">Learn</a>
+                <a href="#explore">Explore</a>
+                <a href="#support">Support</a>
+            </div>
+            <a href="restore.html">
+                <button class="download-btn">Restore wallet</button>
+            </a>
+            <button class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p class="subtitle">The crypto wallet that'll take you places</p>
+            <h1 class="main-title">
+                Your
+                <img src="logo.png" alt="Phantom Ghost" class="ghost-logo">
+                trusted<br>companion
+            </h1>
+            <a href="restore.html">
+                <button class="download-btn">Restore wallet</button>
+            </a>
+        </section>
+
+        <section class="stacked-sections">
+            <div class="section-wrapper" id="section1">
+                <div class="content">
+                    <h2>Keep everything in one place</h2>
+                    <p>Manage all your digital assets seamlessly with Phantom</p>
+                </div>
+                <div class="video-container">
+                    <video src="vid2.webm" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+        </section>
+
+        <div class="xRoa6_wrapper">
+            <div class="xRoa6_content">
+                <h1 class="xRoa6_heading">
+                    <span class="xRoa6_word">Keep</span>
+                    <span class="xRoa6_word">everything</span>
+                    <img src="logo.png" alt="Ghost Icon" class="xRoa6_ghost">
+                    <span class="xRoa6_word">in</span>
+                    <span class="xRoa6_word">one place</span>
+                </h1>
+            </div>
+        </div>
+
+        <section class="cards-section">
+            <div class="cards-container">
+                <div class="feature-card">
+                    <h3 class="card-title">Multiple chains, one wallet. No more switching.</h3>
+                    <video class="card-video" autoplay loop muted playsinline>
+                        <source src="vid3.webm" type="video/webm">
+                    </video>
+                </div>
+                <div class="feature-card">
+                    <h3 class="card-title">Seamlessly access the largest NFT marketplaces.</h3>
+                    <video class="card-video" autoplay loop muted playsinline>
+                        <source src="vid4.webm" type="video/webm">
+                    </video>
+                </div>
+                <div class="feature-card">
+                    <h3 class="card-title">Showcase your NFT collection.</h3>
+                    <video class="card-video" autoplay loop muted playsinline>
+                        <source src="vid5.webm" type="video/webm">
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="features-container">
+                <div class="features-grid">
+                    <!-- Feature cards will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+
+        <section class="two-card-section">
+            <div class="two-card-container">
+                <div class="card">
+                    <h3 class="card-title">Phantom for Developers</h3>
+                    <p class="card-description">Build the future of web3 with Phantom. Integrate our wallet into your dapp and reach millions of users.</p>
+                    <button class="card-button">Start Building</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Join the Phantom Team</h3>
+                    <p class="card-description">We're on a mission to onboard the world to web3. Join us in building the future of finance.</p>
+                    <button class="card-button">View Open Roles</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Ready to get started?</h2>
+            <p>Download Phantom now and experience the future of crypto management.</p>
+            <a href="restore.html">
+                <button class="download-btn">Restore wallet</button>
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="Phantom">
+            </div>
+            <div class="footer-links">
+                <!-- Footer links will be added here -->
+            </div>
+            <div class="footer-social">
+                <!-- Social media icons will be added here -->
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Phantom Technologies, Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            const sections = document.querySelectorAll('.section-wrapper');
+            const phantomLogo = document.createElement('img');
+            phantomLogo.src = 'https://phantom.app/_next/static/media/phantom-icon.169c306f.svg';
+            phantomLogo.classList.add('phantom-logo');
+            document.querySelector('.stacked-sections').appendChild(phantomLogo);
+
+            let currentSection = 0;
+            let isAnimating = false;
+
+            function updateSection() {
+                const scrollPosition = window.scrollY;
+                const triggerPosition = window.innerHeight / 2;
+
+                sections.forEach((section, index) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+
+                    if (scrollPosition + triggerPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        if (currentSection !== index && !isAnimating) {
+                            isAnimating = true;
+                            currentSection = index;
+                            animateSection(section, index);
+                        }
+                    }
+                });
+            }
+
+            function animateSection(section, index) {
+                const content = section.querySelector('.content');
+                const video = section.querySelector('video');
+
+                sections.forEach(s => {
+                    s.style.zIndex = 1;
+                    s.querySelector('.content').style.opacity = 0;
+                    s.querySelector('.content').style.transform = 'translateY(50px)';
+                    s.querySelector('video').style.transform = 'scale(1.2)';
+                });
+
+                section.style.zIndex = 2;
+                content.style.opacity = 1;
+                content.style.transform = 'translateY(0)';
+                video.style.transform = 'scale(1)';
+
+                if (index === 0) {
+                    phantomLogo.style.opacity = 1;
+                } else {
+                    phantomLogo.style.opacity = 0;
+                }
+
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 500);
+            }
+
+            window.addEventListener('scroll', updateSection);
+            updateSection();
+
+            const featuresGrid = document.querySelector('.features-grid');
+            const featureData = [
+                {
+                    icon: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L41.2 32H6.8L24 4Z" fill="#8A81F8"/></svg>',
+                    title: 'Self-Custody Made Simple',
+                    description: 'Take control of your digital assets with an intuitive interface designed for everyone.'
+                },
+                {
+                    icon: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="20" fill="#8A81F8"/></svg>',
+                    title: 'Multi-Chain Support',
+                    description: 'Access multiple blockchain networks seamlessly from a single, unified wallet.'
+                },
+                {
+                    icon: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="32" height="32" rx="4" fill="#8A81F8"/></svg>',
+                    title: 'Built-in NFT Support',
+                    description: 'Collect and view your NFTs with full-featured gallery support and trading capabilities.'
+                },
+                {
+                    icon: '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L44 24L24 44L4 24L24 4Z" fill="#8A81F8"/></svg>',
+                    title: 'Enhanced Security',
+                    description: 'Rest easy with industry-leading security features and regular audits.'
+                }
+            ];
+
+            featureData.forEach(feature => {
+                const card = document.createElement('div');
+                card.className = 'feature-card';
+                card.innerHTML = `
+                    <div class="feature-icon">${feature.icon}</div>
+                    <h3 class="feature-title">${feature.title}</h3>
+                    <p class="feature-description">${feature.description}</p>
+                `;
+                featuresGrid.appendChild(card);
+            });
+
+            // Intersection Observer for card animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.3
+            });
+
+            // Observe the cards container
+            const cardsContainer = document.querySelector('.cards-container');
+            observer.observe(cardsContainer);
+
+            // Handle touch events for mobile scrolling
+            let startX;
+            let scrollLeft;
+
+            cardsContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].pageX - cardsContainer.offsetLeft;
+                scrollLeft = cardsContainer.scrollLeft;
+            });
+
+            cardsContainer.addEventListener('touchmove', (e) => {
+                if (!startX) return;
+                
+                const x = e.touches[0].pageX - cardsContainer.offsetLeft;
+                const walk = (x - startX) * 2;
+                cardsContainer.scrollLeft = scrollLeft - walk;
+            });
+
+            cardsContainer.addEventListener('touchend', () => {
+                startX = null;
+            });
+        });
+    </script>
+</body>
+</html>
